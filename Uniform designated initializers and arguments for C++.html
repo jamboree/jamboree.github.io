@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Uniform designated initializers and arguments for C++</title>
+
+<style>
+body{
+    margin: 0 auto;
+    font-family: Georgia, Palatino, serif;
+    color: #444444;
+    line-height: 1;
+    max-width: 960px;
+    padding: 30px;
+}
+h1, h2, h3, h4 {
+    color: #111111;
+    font-weight: 400;
+}
+h1, h2, h3, h4, h5, p {
+    margin-bottom: 24px;
+    padding: 0;
+}
+h1 {
+    font-size: 48px;
+}
+h2 {
+    font-size: 36px;
+    /* The bottom margin is small. It's designed to be used with gray meta text
+     * below a post title. */
+    margin: 24px 0 6px;
+}
+h3 {
+    font-size: 24px;
+}
+h4 {
+    font-size: 21px;
+}
+h5 {
+    font-size: 18px;
+}
+a {
+    color: #0099ff;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    text-decoration: none;
+}
+img[alt=banner] {
+    width: 100%;
+    height: 100%;
+    margin-left: -10%;
+}
+a:hover {
+    text-decoration: none;
+    color: #ff6600;
+}
+a:visited {
+    color: purple;
+    text-decoration: none;
+}
+ul, ol {
+    padding: 0;
+    margin: 0;
+}
+li {
+    line-height: 24px;
+}
+li ul, li ol {
+    margin-left: 24px;
+}
+p, ul, ol {
+    font-size: 16px;
+    line-height: 24px;
+    max-width: 760px;
+}
+pre {
+    border-radius: 4px;
+    padding: 10px 24px;
+    max-width: 800px;
+    white-space: pre-wrap;
+}
+code {
+    border-radius: 4px;
+    font-family: Consolas, Monaco, "Andale Mono", monospace;
+    line-height: 1.5;
+    font-size: 13px;
+
+}
+aside {
+    display: block;
+    float: right;
+    width: 390px;
+}
+blockquote {
+    border-left:.5em solid #eee;
+    padding: 0 2em;
+    margin-left:0;
+    max-width: 476px;
+}
+blockquote  cite {
+    font-size:14px;
+    line-height:20px;
+    color:#bfbfbf;
+}
+blockquote cite:before {
+    content: '\2014 \00A0';
+}
+
+blockquote p {
+    color: #666;
+    max-width: 460px;
+}
+
+hr {
+    width: 540px;
+    text-align: left;
+    margin: 30px -20px;
+    color: #999;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dt, dd {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+dd {
+    margin-left: 40px;
+}
+
+table {
+    margin-bottom: 20px;
+    max-width: 100%;
+    background-color: transparent;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 8px;
+    line-height: 20px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+table th {
+    font-weight: bold;
+}
+
+table thead th {
+    vertical-align: bottom;
+}
+
+table caption + thead tr:first-child th,
+table caption + thead tr:first-child td,
+table colgroup + thead tr:first-child th,
+table colgroup + thead tr:first-child td,
+table thead:first-child tr:first-child th,
+table thead:first-child tr:first-child td {
+    border-top: 0;
+}
+
+table tbody + tbody {
+    border-top: 2px solid #dddddd;
+}
+
+.footnote {
+    vertical-align: top;
+    position: relative;
+    top: -0.5em;
+    font-size: 0.8em;
+}
+
+.tooltip li {
+    line-height: 1.4;
+}
+
+/* Code below this line is copyright Twitter Inc. */
+
+button,
+input,
+select,
+textarea {
+  font-size: 100%;
+  margin: 0;
+  vertical-align: baseline;
+  *vertical-align: middle;
+}
+button, input {
+  line-height: normal;
+  *overflow: visible;
+}
+button::-moz-focus-inner, input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  cursor: pointer;
+  -webkit-appearance: button;
+}
+input[type=checkbox], input[type=radio] {
+  cursor: pointer;
+}
+/* override default chrome & firefox settings */
+input:not([type="image"]), textarea {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+input[type="search"] {
+  -webkit-appearance: textfield;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+label,
+input,
+select,
+textarea {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: normal;
+  margin-bottom: 18px;
+}
+input[type=checkbox], input[type=radio] {
+  cursor: pointer;
+  margin-bottom: 0;
+}
+input[type=text],
+input[type=password],
+textarea,
+select {
+  display: inline-block;
+  width: 210px;
+  padding: 4px;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 18px;
+  height: 18px;
+  color: #808080;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+select, input[type=file] {
+  height: 27px;
+  line-height: 27px;
+}
+textarea {
+  height: auto;
+}
+
+/* grey out placeholders */
+:-moz-placeholder {
+  color: #bfbfbf;
+}
+::-webkit-input-placeholder {
+  color: #bfbfbf;
+}
+
+input[type=text],
+input[type=password],
+select,
+textarea {
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+  transition: border linear 0.2s, box-shadow linear 0.2s;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+input[type=text]:focus, input[type=password]:focus, textarea:focus {
+  outline: none;
+  border-color: rgba(82, 168, 236, 0.8);
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+/* buttons */
+button {
+  display: inline-block;
+  padding: 4px 14px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  background-color: #0064cd;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));
+  background-image: -moz-linear-gradient(top, #049cdb, #0064cd);
+  background-image: -ms-linear-gradient(top, #049cdb, #0064cd);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));
+  background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);
+  background-image: -o-linear-gradient(top, #049cdb, #0064cd);
+  background-image: linear-gradient(top, #049cdb, #0064cd);
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border: 1px solid #004b9a;
+  border-bottom-color: #003f81;
+  -webkit-transition: 0.1s linear all;
+  -moz-transition: 0.1s linear all;
+  transition: 0.1s linear all;
+  border-color: #0064cd #0064cd #003f81;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+button:hover {
+  color: #fff;
+  background-position: 0 -15px;
+  text-decoration: none;
+}
+button:active {
+  -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+</style>
+
+</head>
+<body><p>Document Number: P0XXXR0 <br>
+Date: 2016-xx-xx <br>
+Reply-to: tongari95@gmail.com <br>
+Audience: EWG</p>
+
+
+
+<h1 id="uniform-designated-initializers-and-arguments-for-c">Uniform designated initializers and arguments for C++</h1>
+
+
+
+<h1 id="1-introduction">1. Introduction</h1>
+
+<p>This proposal introduces a uniform syntax for designated initializers in aggregate initialization and designated arguments (a.k.a. named arguments) in function invocation. <br>
+Designated initializers and arguments, despite the distinct names given, technically are the same thing, the only difference is in what they initialize (aggregate members or function arguments). <br>
+The purpose of this proposal is to put the emphasis on the unification rather than the distinction, as we’ll show how the unification is crucial to C++ when it comes to uniform initialization. And we’ll show how this proposal solves an embarrassing overload-resolution problem in the standard sequential containers’ constructors when <em>braced-init-list</em> is used, without changing the constructors’ signatures.</p>
+
+
+
+<h2 id="11-terminology">1.1 Terminology</h2>
+
+<p>In this proposal, we use the term “designated initializers” and “designated arguments” interchangeably, when “designated arguments” is used, we specifically mean the use in function invocation, otherwise, “designated initializers” is used in general.</p>
+
+
+
+<h1 id="2-motivation">2. Motivation</h1>
+
+
+
+<h2 id="21-order-is-ambiguous">2.1 Order is ambiguous</h2>
+
+<p>Order of members/parameters declaration can be quite arbitrary, sometimes it’s conventional, sometimes it’s crafted for padding purpose, and most of the time it depends on the API designer’s taste and mood. The number of members/parameters could easily become large enough that no programmers would remember their absolute order, even if there are only 2 or 3 parameters, the order could still be quite ambiguous, consider <code>copy(a, b)</code>, is it copy-from or copy-to?</p>
+
+
+
+<h2 id="22-order-is-vulnerable">2.2 Order is vulnerable</h2>
+
+<p>Suppose you have a function prototype looks like this:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">void</span> doSomething(TypeA argA, TypeB argB,
+                 <span class="hljs-keyword">bool</span> optionalFlag1 = <span class="hljs-keyword">false</span>,
+                 <span class="hljs-keyword">bool</span> optionalFlag2 = <span class="hljs-keyword">false</span>);</code></pre>
+
+<p>and at the call side, it’s called without the arguments fully specified:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs bash"><span class="hljs-keyword">do</span>Something(a, b, /*optionalFlag1*/opt1);</code></pre>
+
+<p>Some time later, somebody (not necessarily you) decides to add more functionality to <code>doSomething</code>, and a non-optional flag is needed so he adds it before the optional ones, like this:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">void</span> doSomething(TypeA argA, TypeB argB,
+                 <span class="hljs-keyword">bool</span> requiredFlag,
+                 <span class="hljs-keyword">bool</span> optionalFlag1 = <span class="hljs-keyword">false</span>,
+                 <span class="hljs-keyword">bool</span> optionalFlag2 = <span class="hljs-keyword">false</span>);</code></pre>
+
+<p>Now what happens to the caller above? <code>opt1</code> no longer refers to <code>optionalFlag1</code>, but the code still compiles and the behavior is changed silently!</p>
+
+
+
+<h2 id="23-dont-specify-what-you-dont-care">2.3 Don’t specify what you don’t care</h2>
+
+<p>Data members and function parameters can have default values. To initialize an aggregate or invoke a function, you don’t need to specify all the members/arguments, but consider this:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs rust">void <span class="hljs-function"><span class="hljs-keyword">fn</span>(</span><span class="hljs-keyword">int</span> a = <span class="hljs-comment">/*default1*/</span>, <span class="hljs-keyword">int</span> b = <span class="hljs-comment">/*default2*/</span>);</code></pre>
+
+<p>What if you only want to specify <code>b</code> and leave <code>a</code> with the default value? The answer is simple - you can’t, you have to specify <code>a</code> as well. What’s worse, you don’t always know the default values, consider in generic context:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs d"><span class="hljs-keyword">struct</span> T1
+{
+    <span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span> a = <span class="hljs-number">1</span>, <span class="hljs-keyword">int</span> b = <span class="hljs-number">1</span>);
+};
+<span class="hljs-keyword">struct</span> T2
+{
+    <span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span> a = <span class="hljs-number">2</span>, <span class="hljs-keyword">int</span> b = <span class="hljs-number">2</span>);
+};
+<span class="hljs-comment">// T should accept T1/T2</span>
+<span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> T&gt;
+<span class="hljs-keyword">void</span> fn(T&amp; obj)
+{
+    obj.f(<span class="hljs-comment">/*???*/</span>, b)
+}</code></pre>
+
+<p>In the generic function <code>fn</code>, you only want to specify <code>b</code>, but what’s the default value for <code>a</code>?</p>
+
+
+
+<h2 id="24-efficiency-and-safety">2.4 Efficiency and safety</h2>
+
+<p>If an aggregate has many members to initialize, in practice, people won’t specify the initializers for each member in aggregate initialization, instead, it’s often done in this way:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs r">struct LongAggregate
+{
+    FieldA a;
+    FieldB b;
+    <span class="hljs-keyword">...</span>
+    FieldN n;
+};
+
+LongAggregate agg = {};
+agg.a = <span class="hljs-keyword">...</span>;
+agg.b = <span class="hljs-keyword">...</span>;
+<span class="hljs-keyword">...</span>
+agg.n = <span class="hljs-keyword">...</span>;</code></pre>
+
+<p>That means, most of the members are unnecessarily initialized twice, once by value-initialization, another time by later assignment. <br>
+And if you don’t initialize <code>agg</code> at the first place, the uninitialized members which require zero-initialization may lead to bugs.</p>
+
+
+
+<h2 id="25-select-a-member-of-union-to-initialize">2.5 Select a member of union to initialize</h2>
+
+<p>Currently there’s no way to initialize the member except the first one in a <code>union</code> without user-provided constructors.</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs d"><span class="hljs-keyword">union</span> U
+{
+    <span class="hljs-keyword">int</span> i;
+    <span class="hljs-built_in">float</span> f;
+};</code></pre>
+
+<p>How could you initialize <code>U</code> as a <code>float</code> (f)?</p>
+
+
+
+<h1 id="3-proposal">3. Proposal</h1>
+
+<p>The above problems can be solved by designated initializers.</p>
+
+<p>To improve readability</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs oxygene"><span class="hljs-keyword">copy</span>(.<span class="hljs-keyword">from</span> = a, .<span class="hljs-keyword">to</span> = b);</code></pre>
+
+<p>To avoid silent behavior changes</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs bash"><span class="hljs-keyword">do</span>Something(a, b, .optionalFlag1 = opt1);</code></pre>
+
+<p>To ignore what you don’t care</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs rust"><span class="hljs-function"><span class="hljs-keyword">fn</span>(</span>.b = <span class="hljs-number">3</span>);</code></pre>
+
+<p>and for aggregate initialization</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs r">LongAggregate agg =
+{
+    .a = <span class="hljs-keyword">...</span>,
+    .b = <span class="hljs-keyword">...</span>,
+    <span class="hljs-keyword">...</span>
+    .n = <span class="hljs-keyword">...</span>
+}; // leave unspecified members value-initialized</code></pre>
+
+<p>To select a member of union to initialize</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs fix"><span class="hljs-attribute">U u </span>=<span class="hljs-string"> {.f = 3.14};</span></code></pre>
+
+<p>The proposed syntax is inspired by C99 standard, despite the fact, this proposal does <em>not</em> try to take everything from C99’s designated initializers. <br>
+Specifically, these features from C99 are <em>not</em> considered in this proposal: <br>
+* array designator, e.g. <code>[0] = 1</code> <br>
+* designator list, e.g. <code>.a.b = 1</code></p>
+
+
+
+<h2 id="31-designation-syntax">3.1 Designation syntax</h2>
+
+<p>The syntax <code>.identifier = initializer</code> is used for designated initializers. <br>
+<code>.identifier</code> is called the “designator”. <br>
+The <code>identifier</code> refers to a member in an aggregate or an argument in function parameters. <br>
+The <code>initializer</code> is used to initialize the corresponding the member/argument.</p>
+
+
+
+<h2 id="32-designatable-entities">3.2 Designatable entities</h2>
+
+<p>There are 2 entities defined to be designatable: <br>
+* All the members of an aggregate type. <br>
+* Parameters in a function declaration that are explicitly declared as designatable.</p>
+
+<p>In the former, no special syntax is required, because the members are already part of the API. <br>
+In the later, a special syntax is required for a parameter to be designatable, as described below.</p>
+
+
+
+<h3 id="321-function-declaration-and-designatable-parameters">3.2.1 Function declaration and designatable parameters</h3>
+
+<p>For a function parameter to be designatable, its declarator has to be a designator, e.g. <code>int .a</code>. <br>
+Function parameter pack cannot be designatable.</p>
+
+<p>Designatable and non-designatable parameters can be freely mixed in a parameter-list, for example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span> .a, <span class="hljs-keyword">int</span> b, <span class="hljs-keyword">int</span> .c, <span class="hljs-keyword">int</span> d);</code></pre>
+
+<p>where only <code>a</code> and <code>c</code> are designatable.</p>
+
+<p>If a function is declared with designatable parameters and/or default arguments, it cannot be redeclared with designatable parameters and/or default arguments, otherwise, the program is ill-formed.</p>
+
+<p>This feature doesn’t affect how default arguments, function parameter pack and variadic arguments can be specified in a function declaration.</p>
+
+
+
+<h3 id="322-contexts-for-designated-initialization">3.2.2 Contexts for designated initialization</h3>
+
+<ul>
+<li>Aggregate initialization, e.g. <code>Agg agg {.a = 1, .b = 2}</code></li>
+</ul>
+
+
+
+<h3 id="323-contexts-for-designated-arguments">3.2.3 Contexts for designated arguments</h3>
+
+<ul>
+<li>Call to a named function, e.g. <code>fn(.a = 1, .b = 2)</code></li>
+<li>Call to a class object, e.g. <code>[](int .a, int .b){}(.a = 1, .b = 2)</code></li>
+<li>Initialization by constructor, e.g. <code>Class obj(.a = 1, .b = 2)</code></li>
+<li>List-initialization for non-aggregate class type, e.g. <code>Class obj {.a = 1, .b = 2}</code></li>
+<li>Placement new, e.g. <code>new(.a = 1, .b = 2) int</code></li>
+</ul>
+
+<p>In a function-call expression, if there’s any designated argument and the callee resolves to a pointer-to-function, the call is ill-formed. For example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span> .a);
+<span class="hljs-keyword">using</span> FP = <span class="hljs-keyword">void</span>(*)(<span class="hljs-keyword">int</span>);
+<span class="hljs-keyword">struct</span> Surrogate
+{
+    <span class="hljs-keyword">operator</span> FP() <span class="hljs-keyword">const</span> { <span class="hljs-keyword">return</span> f; }
+};
+
+FP fp = f;
+Surrogate s;
+f(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ok</span>
+(f)(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ok</span>
+(&amp;f)(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ill-formed</span>
+fp(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ill-formed</span>
+s(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ill-formed</span></code></pre>
+
+
+
+<h3 id="324-exclusion-from-functional-cast-expression">3.2.4 Exclusion from functional cast expression</h3>
+
+<p>If the explicit type conversion has the syntax <code>new_type(expression)</code> and the expression is a designated argument, it is not considered as a functional cast expression.</p>
+
+
+
+<h2 id="33-designator-uniqueness">3.3 Designator uniqueness</h2>
+
+<p>Designators in the same aggregate initialization or function invocation should be unique, otherwise it’s a hard error and the program is ill-formed. <br>
+For example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs livecodeserver">Agg agg = {.<span class="hljs-operator">a</span> = <span class="hljs-number">1</span>, .<span class="hljs-operator">a</span> = <span class="hljs-number">2</span>};<span class="hljs-comment"> // ill-formed</span>
+fn(.<span class="hljs-operator">a</span> = <span class="hljs-number">1</span>, .<span class="hljs-operator">a</span> = <span class="hljs-number">2</span>);<span class="hljs-comment"> // ill-formed</span>
+template&lt;class F, class T, class U&gt;
+auto tmp(F f, T t, U u) -&gt; decltype(f(.<span class="hljs-operator">a</span> = t, .<span class="hljs-operator">a</span> = u));<span class="hljs-comment"> // ill-formed</span></code></pre>
+
+
+
+<h2 id="34-mapping-of-designated-initializers">3.4 Mapping of designated initializers</h2>
+
+<p>Positional initializers map to the elements (members or parameters) in incremental order, a designator causes the mapping to jump to the matched element, and subsequent mapping begins with the next element in the declaration order.</p>
+
+<p>The mapping is ill-formed if any of the following is true: <br>
+* A designator cannot find the corresponding element <br>
+* The mapped elements overlap with each other <br>
+* The mapped order is out-of-bounds <br>
+* An unmapped parameter doesn’t have a default value (designated arguments specific)</p>
+
+<p>The mapping of initializers is performed as if they are reordered in the expression list before evaluation order is considered, this implies: <br>
+* In list-initialization, the evaluation order is in members or parameters declaration order <br>
+* In a function-call expression, the evaluation order of arguments is unspecified</p>
+
+
+
+<h2 id="35-viable-functions-in-overload-resolution">3.5 Viable functions in overload resolution</h2>
+
+<p>Given a function template, if the mapping of arguments is ill-formed, the template argument deduction fails. <br>
+Given an overload candidate function, if the mapping of arguments is ill-formed, the candidate is not viable.</p>
+
+
+
+<h1 id="4-impact-on-the-standard">4. Impact on the standard</h1>
+
+<p>The proposed feature only affects parsing, semantic analysis and template instantiation, no codegen or ABI changes required.</p>
+
+<p>The proposed uniform syntax for designated initializers and arguments inherits the spirit of uniform initialization, it eliminates some unnecessary distinction between aggregates and non-aggregates. <br>
+For example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">struct</span> Aggregate
+{
+    <span class="hljs-keyword">int</span> a;
+    <span class="hljs-keyword">int</span> b;
+};
+
+class NonAggregate
+{
+    <span class="hljs-keyword">int</span> a;
+    <span class="hljs-keyword">int</span> b;
+<span class="hljs-keyword">public</span>:
+    <span class="hljs-title">NonAggregate</span>(<span class="hljs-keyword">int</span> .a, <span class="hljs-keyword">int</span> .b) : <span class="hljs-title">a</span>(a), <span class="hljs-title">b</span>(b) {}
+};</code></pre>
+
+<p>Both of <code>Aggregate</code> and <code>NonAggregate</code> can be initialized with designated initializers in a similar way:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs avrasm">Aggregate agg = {<span class="hljs-preprocessor">.a</span> = <span class="hljs-number">1</span>, <span class="hljs-preprocessor">.b</span> = <span class="hljs-number">2</span>}<span class="hljs-comment">;</span>
+NonAggregate non_agg = {<span class="hljs-preprocessor">.a</span> = <span class="hljs-number">1</span>, <span class="hljs-preprocessor">.b</span> = <span class="hljs-number">2</span>}<span class="hljs-comment">;</span></code></pre>
+
+<p>It’s an important abstraction to C++ users, you don’t have to always remember what you are initializing is an aggregate or not.</p>
+
+
+
+<h2 id="41-potential-enhancement-on-standard-librarys-interface">4.1 Potential enhancement on standard library’s interface</h2>
+
+<p>The proposed feature may also influence the standard library’s interface in future, by making some of the parameters part of the API. <br>
+For example, it’s an infamous problem that when <em>braced-init-list</em> is used to initialize a standard sequential container, e.g. <code>std::vector</code>, the <code>std::initializer_list</code> constructor overload is preferred even if another constructor overload is a better match:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cpp"><span class="hljs-built_in">std</span>::<span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">float</span>&gt;</span> v {<span class="hljs-built_in">std</span>::size_t(<span class="hljs-number">2</span>), <span class="hljs-number">1.f</span>}; <span class="hljs-comment">// expected {1.f, 1.f} but got {5.f, 1.f}</span></code></pre>
+
+<p>Since <code>std::initializer_list</code> is considered first, there’s no chances for the expected constructor to be selected.</p>
+
+<p>Designatable parameters provide an elegant solution:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cpp"><span class="hljs-built_in">vector</span>(size_type .count, <span class="hljs-comment">// designatable</span>
+       <span class="hljs-keyword">const</span> T&amp; value,
+       <span class="hljs-keyword">const</span> Allocator&amp; alloc = Allocator());
+<span class="hljs-keyword">explicit</span> <span class="hljs-built_in">vector</span>(size_type .count, <span class="hljs-comment">// designatable</span>
+                <span class="hljs-keyword">const</span> Allocator&amp; alloc = Allocator());</code></pre>
+
+<p>This only requires the parameter <code>count</code> to be part of the API, no changes in the function signature. <br>
+With the help of designated arguments, users can use <em>braced-init-list</em>  without the fear of ambiguity.</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cpp"><span class="hljs-built_in">std</span>::<span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">float</span>&gt;</span> v {.count = <span class="hljs-number">2</span>, <span class="hljs-number">1.f</span>}; <span class="hljs-comment">// {1.f, 1.f}</span></code></pre>
+
+
+
+<h1 id="5-design-decisions">5. Design decisions</h1>
+
+
+
+<h2 id="51-alternate-designation-syntax">5.1 Alternate designation syntax</h2>
+
+<p>For example, the GNU style <code>id: init</code> is another candidate. There are reasons why we prefer <code>.id = init</code>: <br>
+* C99 compatible. <br>
+* Intuitive - <code>.</code> is the member access operator, making it a nature fit to specify an element in the targeted aggregate/function. <br>
+* Code completion - <code>.</code> is often used as a trigger point for code completion, helping users to lookup members/parameters in IDE. <br>
+* The <code>=</code> makes the copy-initialization semantic obvious.</p>
+
+
+
+<h2 id="52-should-direct-initialization-syntax-be-supported-in-designation">5.2 Should direct-initialization syntax be supported in designation?</h2>
+
+<p>For example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs avrasm">f(<span class="hljs-preprocessor">.a</span>{<span class="hljs-number">1</span>}, <span class="hljs-preprocessor">.b</span>(<span class="hljs-number">2</span>))<span class="hljs-comment">;</span>
+Agg agg = {<span class="hljs-preprocessor">.a</span>{<span class="hljs-number">1</span>}, <span class="hljs-preprocessor">.b</span>(<span class="hljs-number">2</span>)}<span class="hljs-comment">;</span></code></pre>
+
+<p>We think the answer should be no. In both aggregate initialization and function invocation, each element is copy-initialized, and we’re not going to support direct-initialization in these contexts. It’d be confusing to allow direct-initialization syntax while copy-initialization is actually used.</p>
+
+
+
+<h2 id="53-should-designated-base-initializer-be-supported">5.3 Should designated base initializer be supported?</h2>
+
+<p>For example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">struct</span> Derived: Base
+{
+    <span class="hljs-keyword">int</span> a;
+};
+Derived d = {.Base<span class="hljs-comment">/*???*/</span>, .a = <span class="hljs-number">1</span>};</code></pre>
+
+<p>We think the answer should be “not yet”. Since C++17, aggregates can now have base classes. But we have no motivating use cases for designated base initializer yet, and since the base initializers will be the leading initializers anyway, we don’t feel a strong requirement for designated base initializers. Besides, as described above, we don’t want to support direct-initialization syntax, so how the initialization syntax for base classes would like is another problem.</p>
+
+
+
+<h2 id="54-should-template-arguments-be-supported">5.4 Should template arguments be supported?</h2>
+
+<p>For example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs d"><span class="hljs-comment">// Not proposed</span>
+<span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> .T, <span class="hljs-built_in">bool</span> .B&gt;
+<span class="hljs-keyword">struct</span> Tmpl {};
+
+Tmpl&lt;.T = <span class="hljs-keyword">int</span>, .B = <span class="hljs-literal">true</span>&gt; tmp;</code></pre>
+
+<p>We think the answer should be “not yet”. It may come in future proposal if desired.</p>
+
+<h2 id="55-why-not-make-all-function-parameters-designatable-by-default">5.5 Why not make all function parameters designatable by default?</h2>
+
+<p>We think the library author (API designer) should have the right to decide whether he wants to maintain the parameter names as part of the API. While we encourage the use of designatable parameters, we also think it should be an opt-in feature, as many of the parameter names are not designed to be used from outside, especially in the standard library itself, making them designatable by default allows  accidental use of parameter names which are not intended to be maintained.</p>
+
+
+
+<h1 id="6-implementation-experience">6. Implementation experience</h1>
+
+<p>We have implemented the prototype based on Clang, the source code can be reached at: <br>
+<a href="https://github.com/jamboree/clang/tree/feature/designator">https://github.com/jamboree/clang/tree/feature/designator</a></p>
+
+<p>Note that both GCC and Clang already have designated initializers as part of C99 support and C++ extension.</p>
+
+
+
+<h1 id="7-related-works">7. Related works</h1>
+
+<ul>
+<li><a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4172.htm">N4172 - A proposal for named arguments for C++</a></li>
+<li><a href="http://www.google.com/url?q=http%3A%2F%2Fhtmlpreview.github.io%2F%3Fhttps%3A%2F%2Fraw.github.com%2FCTMacUser%2Fmultiarray-iso-proposal%2Fmaster%2Fdesignation-proposal.html&amp;sa=D&amp;sntz=1&amp;usg=AFQjCNHF6IpnHi3H_49dsD_7Db4dM7qnqg">Proposal to add C99 designated initializers to C++</a> (not submitted)</li>
+</ul></body>
+</html>
