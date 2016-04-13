@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <title>Uniform designated initializers and arguments for C++</title>
-
 <style>
 body{
     margin: 0 auto;
@@ -107,7 +106,7 @@ blockquote cite:before {
     content: '\2014 \00A0';
 }
 
-blockquote p {
+blockquote p {  
     color: #666;
     max-width: 460px;
 }
@@ -124,8 +123,8 @@ dt {
 }
 
 dt, dd {
-    margin-top: 5px;
-    margin-bottom: 10px;
+    margin-top: 5px; 
+    margin-bottom: 10px; 
 }
 
 dd {
@@ -336,9 +335,8 @@ button:active {
 button::-moz-focus-inner {
   padding: 0;
   border: 0;
-}
+} 
 </style>
-
 </head>
 <body><p>Document Number: P0XXXR0 <br>
 Date: 2016-xx-xx <br>
@@ -545,7 +543,7 @@ In the later, a special syntax is required for a parameter to be designatable, a
 
 <h3 id="321-function-declaration-and-designatable-parameters">3.2.1 Function declaration and designatable parameters</h3>
 
-<p>For a function parameter to be designatable, its declarator has to be a designator, e.g. <code>int .a</code>. <br>
+<p>For a function parameter to be designatable, its name has to be a designator, e.g. <code>int .a</code>. <br>
 Function parameter pack cannot be designatable.</p>
 
 <p>Designatable and non-designatable parameters can be freely mixed in a parameter-list, for example:</p>
@@ -558,11 +556,18 @@ Function parameter pack cannot be designatable.</p>
 
 <p>If a function is declared with designatable parameters and/or default arguments, it cannot be redeclared with designatable parameters and/or default arguments, otherwise, the program is ill-formed.</p>
 
-<p>This feature doesn’t affect how default arguments, function parameter pack and variadic arguments can be specified in a function declaration.</p>
+<p>Designatable parameters don’t affect the type of the function. <br>
+This feature doesn’t affect how default arguments, function parameter pack and variadic arguments can be specified in a function declaration.</p>
 
 
 
-<h3 id="322-contexts-for-designated-initialization">3.2.2 Contexts for designated initialization</h3>
+<h4 id="3211-inheriting-constructors">3.2.1.1 Inheriting constructors</h4>
+
+<p>For each inherited constructor, the designatable parameters are also inherited.</p>
+
+
+
+<h3 id="322-contexts-for-designated-initializers">3.2.2 Contexts for designated initializers</h3>
 
 <ul>
 <li>Aggregate initialization, e.g. <code>Agg agg {.a = 1, .b = 2}</code></li>
@@ -598,12 +603,6 @@ f(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ok</sp
 (&amp;f)(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ill-formed</span>
 fp(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ill-formed</span>
 s(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// ill-formed</span></code></pre>
-
-
-
-<h3 id="324-exclusion-from-functional-cast-expression">3.2.4 Exclusion from functional cast expression</h3>
-
-<p>If the explicit type conversion has the syntax <code>new_type(expression)</code> and the expression is a designated argument, it is not considered as a functional cast expression.</p>
 
 
 
