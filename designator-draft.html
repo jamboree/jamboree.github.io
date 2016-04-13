@@ -8,6 +8,7 @@ body{
     margin: 0 auto;
     font-family: Georgia, Palatino, serif;
     color: #444444;
+    background-color: white;
     line-height: 1;
     max-width: 960px;
     padding: 30px;
@@ -528,6 +529,9 @@ Specifically, these features from C99 are <em>not</em> considered in this propos
 The <code>identifier</code> refers to a member in an aggregate or an argument in function parameters. <br>
 The <code>initializer</code> is used to initialize the corresponding the member/argument.</p>
 
+<p>Syntactically, designation can only appear in parameter-list or initializer-list. <br>
+Designation cannot be followed by <code>...</code>, otherwise it’s a syntax error and the program is ill-formed.</p>
+
 
 
 <h2 id="32-designatable-entities">3.2 Designatable entities</h2>
@@ -719,9 +723,9 @@ With the help of designated arguments, users can use <em>braced-init-list</em>  
 
 <p>For example, the GNU style <code>id: init</code> is another candidate. There are reasons why we prefer <code>.id = init</code>: <br>
 * C99 compatible. <br>
-* Intuitive - <code>.</code> is the member access operator, making it a nature fit to specify an element in the targeted aggregate/function. <br>
-* Code completion - <code>.</code> is often used as a trigger point for code completion, helping users to lookup available members/parameters in IDE. <br>
-* The <code>=</code> makes the copy-initialization semantic obvious.</p>
+* Idiomatic - the <code>.</code> is the member access operator, making it an intuitive syntax to specify an element in the targeted aggregate/function. <br>
+* Code completion - the <code>.</code> is often used as a trigger point for code completion, helping users to lookup available members/parameters in IDE. <br>
+* Language consistence - the <code>=</code> makes it clear that it’s not direct-initialization.</p>
 
 
 
@@ -734,7 +738,7 @@ With the help of designated arguments, users can use <em>braced-init-list</em>  
 <pre class="prettyprint"><code class="language-c++ hljs avrasm">f(<span class="hljs-preprocessor">.a</span>{<span class="hljs-number">1</span>}, <span class="hljs-preprocessor">.b</span>(<span class="hljs-number">2</span>))<span class="hljs-comment">;</span>
 Agg agg = {<span class="hljs-preprocessor">.a</span>{<span class="hljs-number">1</span>}, <span class="hljs-preprocessor">.b</span>(<span class="hljs-number">2</span>)}<span class="hljs-comment">;</span></code></pre>
 
-<p>We think the answer should be no. In both aggregate initialization and function invocation, each element is copy-initialized, and we’re not going to support direct-initialization in these contexts. It’d be confusing to allow direct-initialization syntax while copy-initialization is actually used.</p>
+<p>We think the answer should be no. In both aggregate initialization and function invocation, each element is copy-initialized (or reference-initialized), and we’re not going to support direct-initialization in these contexts. It’d be confusing to allow direct-initialization syntax while copy-initialization is actually used.</p>
 
 
 
