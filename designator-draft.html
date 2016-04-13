@@ -352,7 +352,7 @@ Audience: EWG</p>
 <h1 id="1-introduction">1. Introduction</h1>
 
 <p>This proposal introduces a uniform syntax for designated initializers in aggregate initialization and designated arguments (a.k.a. named arguments) in function invocation. <br>
-Designated initializers and arguments, despite the distinct names given, technically are the same thing, the only difference is in what they initialize (aggregate members or function arguments). <br>
+In the solution we proposed, designated initializers and arguments, technically are the same thing, the only difference is in what they initialize (aggregate members or function arguments). <br>
 The purpose of this proposal is to put the emphasis on the unification rather than the distinction, as we’ll show how the unification is crucial to C++ when it comes to uniform initialization. And we’ll show how this proposal solves an embarrassing overload-resolution problem in the standard sequential containers’ constructors when <em>braced-init-list</em> is used, without changing the constructors’ signatures.</p>
 
 
@@ -454,7 +454,7 @@ agg.b = <span class="hljs-keyword">...</span>;
 agg.n = <span class="hljs-keyword">...</span>;</code></pre>
 
 <p>That means, most of the members are unnecessarily initialized twice, once by value-initialization, another time by later assignment. <br>
-And if you don’t initialize <code>agg</code> at the first place, the uninitialized members which require zero-initialization may lead to bugs.</p>
+And if you don’t initialize <code>agg</code> at the first place, the uninitialized members may lead to bugs.</p>
 
 
 
@@ -470,7 +470,7 @@ And if you don’t initialize <code>agg</code> at the first place, the uninitial
     <span class="hljs-built_in">float</span> f;
 };</code></pre>
 
-<p>How could you initialize <code>U</code> as a <code>float</code> (f)?</p>
+<p>How could you initialize <code>U</code> as a <code>float</code> (<code>f</code>)?</p>
 
 
 
@@ -524,7 +524,7 @@ Specifically, these features from C99 are <em>not</em> considered in this propos
 <h2 id="31-designation-syntax">3.1 Designation syntax</h2>
 
 <p>The syntax <code>.identifier = initializer</code> is used for designated initializers. <br>
-<code>.identifier</code> is called the “designator”. <br>
+<code>.identifier</code> is called the <em>designator</em>. <br>
 The <code>identifier</code> refers to a member in an aggregate or an argument in function parameters. <br>
 The <code>initializer</code> is used to initialize the corresponding the member/argument.</p>
 
@@ -554,14 +554,18 @@ Function parameter pack cannot be designatable.</p>
 
 <p>where only <code>a</code> and <code>c</code> are designatable.</p>
 
-<p>If a function is declared with designatable parameters and/or default arguments, it cannot be redeclared with designatable parameters and/or default arguments, otherwise, the program is ill-formed.</p>
-
 <p>Designatable parameters don’t affect the type of the function. <br>
 This feature doesn’t affect how default arguments, function parameter pack and variadic arguments can be specified in a function declaration.</p>
 
 
 
-<h4 id="3211-inheriting-constructors">3.2.1.1 Inheriting constructors</h4>
+<h4 id="3211-function-redeclaration">3.2.1.1 Function redeclaration</h4>
+
+<p>If a function is declared with designatable parameters and/or default arguments, it cannot be redeclared with designatable parameters and/or default arguments, otherwise, the program is ill-formed.</p>
+
+
+
+<h4 id="3212-inheriting-constructors">3.2.1.2 Inheriting constructors</h4>
 
 <p>For each inherited constructor, the designatable parameters are also inherited.</p>
 
@@ -645,7 +649,7 @@ Given an overload candidate function, if the mapping of arguments is ill-formed,
 
 <h1 id="4-impact-on-the-standard">4. Impact on the standard</h1>
 
-<p>The proposed feature only affects parsing, semantic analysis and template instantiation, no codegen or ABI changes required.</p>
+<p>The proposed feature only affects parsing, semantic analysis and template instantiation, no codegen or ABI changes are required.</p>
 
 <p>The proposed uniform syntax for designated initializers and arguments inherits the spirit of uniform initialization, it eliminates some unnecessary distinction between aggregates and non-aggregates. <br>
 For example:</p>
@@ -673,7 +677,7 @@ class NonAggregate
 <pre class="prettyprint"><code class="language-c++ hljs avrasm">Aggregate agg = {<span class="hljs-preprocessor">.a</span> = <span class="hljs-number">1</span>, <span class="hljs-preprocessor">.b</span> = <span class="hljs-number">2</span>}<span class="hljs-comment">;</span>
 NonAggregate non_agg = {<span class="hljs-preprocessor">.a</span> = <span class="hljs-number">1</span>, <span class="hljs-preprocessor">.b</span> = <span class="hljs-number">2</span>}<span class="hljs-comment">;</span></code></pre>
 
-<p>It’s an important abstraction to C++ users, you don’t have to always remember what you are initializing is an aggregate or not.</p>
+<p>It’s an important abstraction to C++ users - you don’t have to always remember what you are initializing is an aggregate or not, and this is particularly crucial in generic programming.</p>
 
 
 
@@ -716,7 +720,7 @@ With the help of designated arguments, users can use <em>braced-init-list</em>  
 <p>For example, the GNU style <code>id: init</code> is another candidate. There are reasons why we prefer <code>.id = init</code>: <br>
 * C99 compatible. <br>
 * Intuitive - <code>.</code> is the member access operator, making it a nature fit to specify an element in the targeted aggregate/function. <br>
-* Code completion - <code>.</code> is often used as a trigger point for code completion, helping users to lookup members/parameters in IDE. <br>
+* Code completion - <code>.</code> is often used as a trigger point for code completion, helping users to lookup available members/parameters in IDE. <br>
 * The <code>=</code> makes the copy-initialization semantic obvious.</p>
 
 
@@ -746,7 +750,7 @@ Agg agg = {<span class="hljs-preprocessor">.a</span>{<span class="hljs-number">1
 };
 Derived d = {.Base<span class="hljs-comment">/*???*/</span>, .a = <span class="hljs-number">1</span>};</code></pre>
 
-<p>We think the answer should be “not yet”. Since C++17, aggregates can now have base classes. But we have no motivating use cases for designated base initializer yet, and since the base initializers will be the leading initializers anyway, we don’t feel a strong requirement for designated base initializers. Besides, as described above, we don’t want to support direct-initialization syntax, so how the initialization syntax for base classes would like is another problem.</p>
+<p>We think the answer should be “not yet”. Since C++17, aggregates can now have base classes. But we have no motivating use cases for designated base initializer yet, and since the base initializers will be the leading initializers anyway, we don’t feel a strong requirement for designated base initializers. Besides, as described above, we don’t want to support direct-initialization syntax, so how the initialization syntax for base classes would be is another problem.</p>
 
 
 
