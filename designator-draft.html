@@ -817,6 +817,56 @@ Path 2 needs to interfere with the type system, hence ABI changes (e.g. name man
 
 
 
+<h2 id="57-alternative-of-designated-arguments">5.7 Alternative of designated arguments</h2>
+
+<p>Somebody suggested that designated arguments could be a secondary citizen built upon C99’s designated initializer, the idea is roughly: <br>
+* Allow inline aggregate definition in function parameters. <br>
+* Syntax sugar for eliminating the braces in function call.</p>
+
+<p>For example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">void</span> f(<span class="hljs-keyword">struct</span> {<span class="hljs-keyword">int</span> a;});
+
+f({.a = <span class="hljs-number">1</span>});
+f(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// syntax sugar</span></code></pre>
+
+<p>We don’t think this approach is viable for C++. There are many problems: <br>
+* Type definition in function parameters tends to be problematic - if the declaration of <code>f</code> appear more than once, should the anon-struct be considered the same type? <br>
+* No clear way to map the arguments to parameters, where aggregates and normal parameters can be mixed, and braces elision complicates it further. <br>
+* Doesn’t play well with overloading and template argument deduction.</p>
+
+<p>For function overloads:</p>
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">struct</span> I { <span class="hljs-keyword">int</span> a; };
+<span class="hljs-keyword">struct</span> F { <span class="hljs-keyword">float</span> a; };
+
+<span class="hljs-keyword">void</span> f(I);
+<span class="hljs-keyword">void</span> f(F);
+
+f({<span class="hljs-number">1</span>}); <span class="hljs-comment">// ambiguous</span>
+f({.a = <span class="hljs-number">1</span>}); <span class="hljs-comment">// ambiguous</span></code></pre>
+
+<p>The call to <code>f</code> would be ambiguous no matter designated initializers are used or not.</p>
+
+<p>For function templates:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs d"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> T&gt;
+<span class="hljs-keyword">struct</span> A { T a; };
+
+<span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> T&gt;
+<span class="hljs-keyword">void</span> f(A&lt;T&gt;);
+
+f({<span class="hljs-number">1</span>}); <span class="hljs-comment">// couldn't infer template argument</span>
+f({.a = <span class="hljs-number">1</span>}); <span class="hljs-comment">// couldn't infer template argument</span></code></pre>
+
+<p>The template argument cannot be deduced no matter designated initializers are used or not.</p>
+
+<p>In contrast, our approach doesn’t suffer from these problems, overloading and template argument deduction are well-supported.</p>
+
 <h1 id="6-implementation-experience">6. Implementation experience</h1>
 
 <p>We have implemented the prototype based on Clang, the source code can be reached at: <br>
