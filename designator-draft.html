@@ -715,6 +715,24 @@ With the help of designated arguments, users can use <em>braced-init-list</em>  
 
 
 
+<h2 id="42-adoption-strategy-for-library-writers">4.2 Adoption strategy for library writers</h2>
+
+<p>Libraries often need to support different compilers, including those without new features available. <br>
+For library writers to take advantage of this feature, macro can be used:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs vala"><span class="hljs-preprocessor">#ifdef __cpp_designators // some way to detect the feature</span>
+<span class="hljs-preprocessor">#define NAMED .</span>
+<span class="hljs-preprocessor">#else</span>
+<span class="hljs-preprocessor">#define NAMED</span>
+<span class="hljs-preprocessor">#endif</span>
+
+<span class="hljs-comment">// Library API</span>
+<span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span><span class="hljs-constant"> NAMED </span>a);</code></pre>
+
+
+
 <h1 id="5-design-decisions">5. Design decisions</h1>
 
 
@@ -725,7 +743,7 @@ With the help of designated arguments, users can use <em>braced-init-list</em>  
 * C99 compatible. <br>
 * Idiomatic - the <code>.</code> is the member access operator, making it an intuitive syntax to specify an element in the targeted aggregate/function. <br>
 * Code completion - the <code>.</code> is often used as a trigger point for code completion, helping users to lookup available members/parameters in IDE. <br>
-* Language consistence - the <code>=</code> makes it clear that it’s not direct-initialization.</p>
+* Language consistency - the <code>=</code> makes it clear that it’s not direct-initialization.</p>
 
 
 
@@ -772,9 +790,30 @@ Tmpl&lt;.T = <span class="hljs-keyword">int</span>, .B = <span class="hljs-liter
 
 <p>We think the answer should be “not yet”. It may come in future proposal if desired.</p>
 
+
+
 <h2 id="55-why-not-make-all-function-parameters-designatable-by-default">5.5 Why not make all function parameters designatable by default?</h2>
 
-<p>We think the library author (API designer) should have the right to decide whether he wants to maintain the parameter names as part of the API. While we encourage the use of designatable parameters, we also think it should be an opt-in feature, as many of the parameter names are not designed to be used from outside, especially in the standard library itself, making them designatable by default allows  accidental use of parameter names which are not intended to be maintained.</p>
+<p>We think the library author (API designer) should have the right to decide whether he wants to maintain the parameter names as part of the API. While we encourage the use of designatable parameters, we also think it should be an opt-in feature, as many of the parameter names are not designed to be used from outside, especially in the standard library itself, making them designatable by default allows inadvertant use of parameter names which are not intended to be maintained.</p>
+
+
+
+<h2 id="56-why-not-allow-parameter-name-based-overloading">5.6 Why not allow parameter-name based overloading?</h2>
+
+<p>For example:</p>
+
+
+
+<pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-comment">// Not proposed</span>
+<span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span> .foo);
+<span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span> .bar);</code></pre>
+
+<p>There are 2 possible semantic for the overloading: <br>
+1. Both <code>f</code> refer to the same function entity. <br>
+2. The two <code>f</code> refer to different function entities.</p>
+
+<p>Path 1 doesn’t affect the type system, but this is not very useful, and probably confusing to the user. <br>
+Path 2 needs to interfere with the type system, hence ABI changes (e.g. name mangling) are also required. It’s undesirable that adding designatable parameters to existing API would cause ABI incompatibility, so we don’t think it worth the trouble.</p>
 
 
 
