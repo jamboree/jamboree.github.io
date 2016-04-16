@@ -632,6 +632,8 @@ auto tmp(F f, T t, U u) -&gt; decltype(f(.<span class="hljs-operator">a</span> =
 
 <p>Positional initializers map to the elements (members or parameters) in incremental order, a designator causes the mapping to jump to the matched element, and subsequent mapping begins with the next element in the declaration order.</p>
 
+<p>For template argument deduction, the mapping is done after explicit template arguments are substituted, and every non-deduced parameter pack is ignored.</p>
+
 <p>The mapping is ill-formed if any of the following is true: <br>
 * A designator cannot find the corresponding element <br>
 * The mapped elements overlap with each other <br>
@@ -648,6 +650,12 @@ auto tmp(F f, T t, U u) -&gt; decltype(f(.<span class="hljs-operator">a</span> =
 
 <p>Given a function template, if the mapping of arguments is ill-formed, the template argument deduction fails. <br>
 Given an overload candidate function, if the mapping of arguments is ill-formed, the candidate is not viable.</p>
+
+
+
+<h2 id="36-feature-detection">3.6 Feature detection</h2>
+
+<p>The macro <code>__cpp_designators</code> is defined to indicate the support for this feature in the compiler.</p>
 
 
 
@@ -712,24 +720,6 @@ With the help of designated arguments, users can use <em>braced-init-list</em>  
 
 
 <pre class="prettyprint"><code class="language-c++ hljs cpp"><span class="hljs-built_in">std</span>::<span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;<span class="hljs-keyword">float</span>&gt;</span> v {.count = <span class="hljs-number">2</span>, <span class="hljs-number">1.f</span>}; <span class="hljs-comment">// {1.f, 1.f}</span></code></pre>
-
-
-
-<h2 id="42-adoption-strategy-for-library-writers">4.2 Adoption strategy for library writers</h2>
-
-<p>Libraries often need to support different compilers, including those without new features available. <br>
-For library writers to take advantage of this feature, macro can be used:</p>
-
-
-
-<pre class="prettyprint"><code class="language-c++ hljs vala"><span class="hljs-preprocessor">#ifdef __cpp_designators // some way to detect the feature</span>
-<span class="hljs-preprocessor">#define NAMED .</span>
-<span class="hljs-preprocessor">#else</span>
-<span class="hljs-preprocessor">#define NAMED</span>
-<span class="hljs-preprocessor">#endif</span>
-
-<span class="hljs-comment">// Library API</span>
-<span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span><span class="hljs-constant"> NAMED </span>a);</code></pre>
 
 
 
@@ -839,6 +829,8 @@ f(.a = <span class="hljs-number">1</span>); <span class="hljs-comment">// syntax
 
 <p>For function overloads:</p>
 
+
+
 <pre class="prettyprint"><code class="language-c++ hljs cs"><span class="hljs-keyword">struct</span> I { <span class="hljs-keyword">int</span> a; };
 <span class="hljs-keyword">struct</span> F { <span class="hljs-keyword">float</span> a; };
 
@@ -866,6 +858,8 @@ f({.a = <span class="hljs-number">1</span>}); <span class="hljs-comment">// coul
 <p>The template argument cannot be deduced no matter designated initializers are used or not.</p>
 
 <p>In contrast, our approach doesn’t suffer from these problems, overloading and template argument deduction are well-supported.</p>
+
+
 
 <h1 id="6-implementation-experience">6. Implementation experience</h1>
 
